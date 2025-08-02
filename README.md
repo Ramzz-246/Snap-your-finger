@@ -419,7 +419,7 @@ The JavaScript Logic continuously processes this data through a Peak Volume Dete
 
 Finally, the calculated satisfactionScore triggers an Update UI step, dynamically refreshing the score display, showing a personalized message, and playing engaging animations. Your achievement is then immortalized in Local Storage, saving your high and previous scores for future bragging rights, before being presented on the User Display for all to see!
 
-IMAGE:workflow diagram.png
+![WORKFLOW DIAGRAM](workflowdiagram.png)
 
 For Hardware:The "Finger Snap Satisfaction Meter" relies on minimal, readily available hardware.
 
