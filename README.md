@@ -326,14 +326,9 @@ Progressive Web App (PWA) features for offline use and installability.
 
 
 # Screenshots (Add at least 3)
-![Screenshot1](Add screenshot 1 here with proper name)
-*Add caption explaining what this shows*
-
-![Screenshot2](Add screenshot 2 here with proper name)
-*Add caption explaining what this shows*
-
-![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows*
+screenshot (1).png
+screenshot (2).png
+screenshot (3).png
 
 # Diagrams
 ![Workflow](Add your workflow/architecture diagram here)
