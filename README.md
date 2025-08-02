@@ -326,7 +326,7 @@ Progressive Web App (PWA) features for offline use and installability.
 
 
 # Screenshots (Add at least 3)
-Screenshot (1).png
+![SS1](Screenshot (1).png)
 Screenshot (2).png
 Screenshot (3).png
 
