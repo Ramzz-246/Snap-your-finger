@@ -327,8 +327,8 @@ Progressive Web App (PWA) features for offline use and installability.
 
 # Screenshots (Add at least 3)
 ![SS1](ss1.png)
-Screenshot (2).png
-Screenshot (3).png
+![SS2](ss2.png)
+![SS3](ss3.png)
 
 # Diagrams
 Below is a conceptual outline for a workflow/architecture diagram that visually explains the "Finger Snap Satisfaction Meter." You would use a tool like Lucidchart, draw.io, Excalidraw, or even simple drawing software to create this.
