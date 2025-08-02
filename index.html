@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finger Snap Satisfaction Meter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f9ff;
+        }
+        .container {
+            max-width: 90vw;
+            height: 90vh;
+        }
+        #listeningIndicator {
+            transition: all 0.2s ease-in-out;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+        .message-box {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #satisfactionScore {
+            font-size: 5rem;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.5s ease-in-out;
+        }
+        .glow-animation {
+            animation: glow 1s infinite alternate;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #fff, 0 0 10px #6366f1, 0 0 15px #6366f1; }
+            to { text-shadow: 0 0 10px #fff, 0 0 20px #6366f1, 0 0 30px #6366f1; }
+        }
+        .wiggle-animation {
+            animation: wiggle 0.5s infinite;
+        }
+        @keyframes wiggle {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px) rotate(-2deg); }
+            75% { transform: translateX(5px) rotate(2deg); }
+        }
+    </style>
+</head>
+<body class="bg-indigo-50">
+    <div class="container mx-auto flex flex-col items-center justify-center min-h-screen text-center p-4">
+        
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="bg-white rounded-3xl shadow-xl p-8 md:p-12 w-full max-w-2xl border-4 border-indigo-200 message-box">
+            <h1 class="text-4xl md:text-5xl font-bold text-indigo-700 mb-4">
+                The Finger Snap Satisfaction Meter
+            </h1>
+            <p class="text-lg text-gray-600 mb-6">
+                This highly scientific and completely useless application measures the satisfaction of your finger snaps using advanced microphone analysis. A louder, crisper snap will give you a higher score!
+            </p>
+            <div id="welcomeScoreDisplay" class="text-xl font-semibold text-indigo-500 mb-4">
+                <span id="welcomeHighScore">Highest Satisfaction: 0</span>
+                <br>
+                <span id="welcomePreviousScore">Previous Score: 0</span>
+            </div>
+            <button onclick="showAnalyzerScreen()" class="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-full shadow-lg transition-transform transform hover:scale-105">
+                Start Snapping
+            </button>
+            <button onclick="resetData()" class="mt-4 px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-full shadow-lg transition-transform transform hover:scale-105">
+                Reset Data
+            </button>
+        </div>
+
+        <!-- Analyzer Screen (hidden by default) -->
+        <div id="analyzerScreen" class="bg-white rounded-3xl shadow-xl p-8 md:p-12 w-full max-w-2xl border-4 border-indigo-200 hidden">
+            <h1 class="text-4xl md:text-5xl font-bold text-indigo-700 mb-4">
+                Snap Your Fingers!
+            </h1>
+            <p class="text-lg text-gray-600 mb-8">
+                Press 'Start Listening' then snap your fingers next to your microphone.
+            </p>
+
+            <!-- Status and Listening Indicator -->
+            <div id="statusArea" class="my-8">
+                <div id="analyzerScoreDisplay" class="text-xl font-semibold text-indigo-500 mb-4">
+                    <span id="analyzerHighScore">Highest Satisfaction: 0</span>
+                    <br>
+                    <span id="analyzerPreviousScore">Previous Score: 0</span>
+                </div>
+                <div class="relative w-24 h-24 mx-auto">
+                    <div id="listeningIndicator" class="absolute inset-0 rounded-full flex items-center justify-center transition-all duration-300 ease-in-out bg-indigo-100 border-4 border-indigo-400">
+                        <!-- Hand icon for finger snapping -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400">
+                            <path d="M12 10V2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z"/>
+                            <path d="M6 10V2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/>
+                            <path d="M18 10V2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z"/>
+                            <path d="M0 10V2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2z"/>
+                            <path d="M12 18V10a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z"/>
+                            <path d="M6 18V10a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/>
+                            <path d="M18 18V10a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z"/>
+                            <path d="M0 18V10a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2z"/>
+                            <path d="M12 22V14a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z"/>
+                            <path d="M6 22V14a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/>
+                            <path d="M18 22V14a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z"/>
+                            <path d="M0 22V14a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2z"/>
+                        </svg>
+                    </div>
+                </div>
+                <p id="statusText" class="mt-4 text-xl font-medium text-gray-500">
+                    Press 'Start' to begin.
+                </p>
+            </div>
+
+            <!-- Score Display -->
+            <div id="resultsArea" class="hidden my-8">
+                <p class="text-lg font-bold text-gray-600">Satisfaction Score:</p>
+                <div id="satisfactionScore" class="font-extrabold text-indigo-600 my-2">0</div>
+                <p id="scoreMessage" class="text-xl font-semibold text-gray-700"></p>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4">
+                <button id="startButton" onclick="startListening()" class="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-full shadow-lg transition-transform transform hover:scale-105">
+                    Start Listening
+                </button>
+                <button id="stopButton" onclick="stopListening()" class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-full shadow-lg transition-transform transform hover:scale-105" disabled>
+                    Stop Listening
+                </button>
+            </div>
+            
+            <div id="permissionModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden z-50">
+                <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md text-center">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Microphone Permission Required</h3>
+                    <p class="text-gray-600 mb-6">This app needs access to your microphone to analyze the pop sound. Please click 'Allow' when prompted by your browser.</p>
+                    <button id="modalCloseButton" onclick="closePermissionModal()" class="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-full">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const analyzerScreen = document.getElementById('analyzerScreen');
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const statusText = document.getElementById('statusText');
+        const listeningIndicator = document.getElementById('listeningIndicator');
+        const satisfactionScoreDisplay = document.getElementById('satisfactionScore');
+        const scoreMessage = document.getElementById('scoreMessage');
+        const welcomeHighScoreDisplay = document.getElementById('welcomeHighScore');
+        const welcomePreviousScoreDisplay = document.getElementById('welcomePreviousScore');
+        const analyzerHighScoreDisplay = document.getElementById('analyzerHighScore');
+        const analyzerPreviousScoreDisplay = document.getElementById('analyzerPreviousScore');
+        const resultsArea = document.getElementById('resultsArea');
+        const permissionModal = document.getElementById('permissionModal');
+
+        let audioContext;
+        let analyser;
+        let stream;
+        let listening = false;
+        let highScore = 0;
+        let previousScore = 0;
+        let snapCountdown = 4;
+        let countdownInterval;
+        let animationFrameId;
+        let bufferLength;
+        let dataArray;
+        let maxPeakVolume = 0;
+        
+        // Load high score and previous score from local storage
+        window.onload = () => {
+            const storedHighScore = localStorage.getItem('snapSatisfactionHighScore');
+            const storedPreviousScore = localStorage.getItem('snapPreviousScore');
+            if (storedHighScore) {
+                highScore = parseInt(storedHighScore);
+            }
+            if (storedPreviousScore) {
+                previousScore = parseInt(storedPreviousScore);
+            }
+            updateScoreDisplays();
+        };
+
+        function showAnalyzerScreen() {
+            welcomeScreen.classList.add('hidden');
+            analyzerScreen.classList.remove('hidden');
+            analyzerScreen.classList.add('message-box');
+        }
+
+        function updateScoreDisplays() {
+            welcomeHighScoreDisplay.textContent = `Highest Satisfaction: ${highScore}`;
+            welcomePreviousScoreDisplay.textContent = `Previous Score: ${previousScore}`;
+            analyzerHighScoreDisplay.textContent = `Highest Satisfaction: ${highScore}`;
+            analyzerPreviousScoreDisplay.textContent = `Previous Score: ${previousScore}`;
+        }
+
+        function resetData() {
+            if (confirm("Are you sure you want to reset all scores? This cannot be undone.")) {
+                localStorage.removeItem('snapSatisfactionHighScore');
+                localStorage.removeItem('snapPreviousScore');
+                highScore = 0;
+                previousScore = 0;
+                updateScoreDisplays();
+                alert("Scores have been reset!");
+            }
+        }
+
+        function calculateScore(peakVolume) {
+            const score = Math.round((peakVolume / 255) * 100);
+            return Math.min(100, score);
+        }
+
+        function getMessageForScore(score) {
+            if (score < 25) return "A gentle rustle. Was that even a snap?";
+            if (score < 50) return "An average snap. It could be louder and crisper!";
+            if (score < 75) return "That was a solid, satisfying snap! Well done!";
+            if (score < 90) return "An absolutely glorious snap! Pure satisfaction!";
+            return "THE ULTIMATE SNAP! The satisfaction is off the charts!";
+        }
+
+        async function initAudio() {
+            try {
+                if (audioContext && audioContext.state !== 'closed') {
+                    startButton.disabled = false;
+                    statusText.textContent = "Microphone ready. Press 'Start' to begin.";
+                    return;
+                }
+
+                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                const source = audioContext.createMediaStreamSource(stream);
+                source.connect(analyser);
+
+                analyser.fftSize = 2048;
+                bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                
+                startButton.disabled = false;
+                statusText.textContent = "Microphone ready. Press 'Start' to begin.";
+            } catch (err) {
+                console.error('Error accessing microphone:', err);
+                statusText.textContent = 'Microphone access denied. Please refresh and allow permissions.';
+                permissionModal.classList.remove('hidden');
+            }
+        }
+
+        function startListening() {
+            if (listening) return;
+            if (!audioContext || audioContext.state === 'closed') {
+                 initAudio();
+                 return;
+            }
+
+            startButton.disabled = true;
+            stopButton.disabled = false;
+            listeningIndicator.classList.add('animate-pulse');
+            listeningIndicator.classList.remove('bg-indigo-100');
+            listeningIndicator.classList.add('bg-indigo-300');
+            resultsArea.classList.add('hidden');
+            listening = true;
+            maxPeakVolume = 0; // Reset max volume for new session
+
+            satisfactionScoreDisplay.classList.remove('glow-animation', 'wiggle-animation');
+            listeningIndicator.classList.remove('wiggle-animation');
+            
+            snapCountdown = 4; // Set duration to 4 seconds
+            statusText.textContent = `Snap within ${snapCountdown}...`;
+            countdownInterval = setInterval(() => {
+                snapCountdown--;
+                if (snapCountdown >= 0) {
+                    statusText.textContent = `Snap within ${snapCountdown}...`;
+                }
+                if (snapCountdown < 0) {
+                    statusText.textContent = `Time's up. Analyzing...`;
+                    displayResults(calculateScore(maxPeakVolume));
+                    stopListening();
+                }
+            }, 1000);
+            
+            const checkSnap = () => {
+                if (!listening) return;
+
+                analyser.getByteFrequencyData(dataArray);
+                let currentPeakVolume = Math.max(...dataArray);
+                if (currentPeakVolume > maxPeakVolume) {
+                    maxPeakVolume = currentPeakVolume;
+                }
+                
+                animationFrameId = requestAnimationFrame(checkSnap);
+            };
+            
+            checkSnap();
+        }
+
+        function stopListening() {
+            if (!listening) return;
+            listening = false;
+
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            if (audioContext && audioContext.state !== 'closed') {
+                audioContext.close();
+            }
+            clearInterval(countdownInterval);
+            cancelAnimationFrame(animationFrameId);
+
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            listeningIndicator.classList.remove('animate-pulse');
+            listeningIndicator.classList.remove('bg-indigo-300');
+            listeningIndicator.classList.add('bg-indigo-100');
+            statusText.textContent = "Press 'Start' to listen again.";
+        }
+        
+        function closePermissionModal() {
+            permissionModal.classList.add('hidden');
+        }
+
+        function displayResults(score) {
+            resultsArea.classList.remove('hidden');
+            satisfactionScoreDisplay.textContent = score;
+
+            if (score > 75) {
+                satisfactionScoreDisplay.classList.add('glow-animation');
+            } else if (score < 25) {
+                listeningIndicator.classList.add('wiggle-animation');
+            }
+
+            scoreMessage.textContent = getMessageForScore(score);
+
+            previousScore = score;
+            localStorage.setItem('snapPreviousScore', previousScore);
+
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('snapSatisfactionHighScore', highScore);
+            }
+            updateScoreDisplays();
+        }
+        
+    </script>
+</body>
+</html>
